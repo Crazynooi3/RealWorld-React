@@ -11,6 +11,9 @@ function App() {
   const login = () => {};
   const logout = () => {
     localStorage.removeItem("token");
+    setIsLogin(false);
+    setToken(null);
+    setUserInfos(null);
   };
 
   const fetchUserData = async () => {

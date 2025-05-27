@@ -2,6 +2,9 @@ import UnauthenticatedUser from "../../components/Header/UnauthenticatedUser";
 import * as YUP from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useContext } from "react";
+import AuthContext from "../../Context/Context";
+import { useNavigate } from "react-router-dom";
 
 const schema = YUP.object().shape({
   email: YUP.string().email("Email is not valid").required("Email is required"),
@@ -11,6 +14,11 @@ const schema = YUP.object().shape({
 });
 
 export default function Login() {
+  const authContext = useContext(AuthContext);
+  const navigate = useNavigate();
+  if (authContext.isLogedin) {
+    navigate("/");
+  }
   const {
     register,
     handleSubmit,

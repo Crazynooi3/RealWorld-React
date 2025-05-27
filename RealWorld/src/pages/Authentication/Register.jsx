@@ -2,6 +2,8 @@ import React from "react";
 import * as YUP from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useContext } from "react";
+import AuthContext from "../../Context/Context";
 import { useNavigate } from "react-router-dom";
 
 import UnauthenticatedUser from "../../components/Header/UnauthenticatedUser";
@@ -15,6 +17,11 @@ const schema = YUP.object().shape({
 });
 
 export default function Register() {
+  const authContext = useContext(AuthContext);
+  const navigate = useNavigate();
+  if (authContext.isLogedin) {
+    navigate("/");
+  }
   const {
     register,
     handleSubmit,
