@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function AuthenticatedUser() {
+export default function AuthenticatedUser(props) {
   return (
     <nav class="navbar navbar-light">
       <div class="container">
@@ -29,7 +29,7 @@ export default function AuthenticatedUser() {
           <li class="nav-item">
             <a class="nav-link" href="/profile/eric-simons">
               <img src="" class="user-pic" />
-              Eric Simons
+              {props.username}
             </a>
           </li>
         </ul>

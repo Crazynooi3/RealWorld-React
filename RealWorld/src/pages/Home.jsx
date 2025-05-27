@@ -1,13 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
+import AuthContext from "../Context/Context";
+
 import UnauthenticatedUser from "../components/Header/UnauthenticatedUser";
 import AuthenticatedUser from "../components/Header/AuthenticatedUser";
 import Footer from "../components/Footer/Footer";
 
 export default function Home() {
+  const authContext = useContext(AuthContext);
+  console.log(authContext);
   return (
     <>
-      <UnauthenticatedUser />
-      <AuthenticatedUser />
+      {authContext.isLogedin ? (
+        <AuthenticatedUser username={authContext.userInfos.username} />
+      ) : (
+        <UnauthenticatedUser />
+      )}
       <div class="home-page">
         <div class="banner">
           <div class="container">

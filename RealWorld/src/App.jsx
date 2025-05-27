@@ -61,10 +61,7 @@ function App() {
     fetchUserData();
   }, []);
 
-  useEffect(() => {
-    console.log("isLogin:", isLogin);
-    console.log("userInfos:", userInfos);
-  }, [isLogin, userInfos]);
+  // useEffect(() => {}, [isLogin, userInfos]);
   return (
     <AuthContext.Provider
       value={{
