@@ -11,7 +11,10 @@ export default function Home() {
   return (
     <>
       {authContext.isLogedin ? (
-        <AuthenticatedUser username={authContext.userInfos.username} />
+        <AuthenticatedUser
+          username={authContext.userInfos.username}
+          image={authContext.userInfos.image}
+        />
       ) : (
         <UnauthenticatedUser />
       )}

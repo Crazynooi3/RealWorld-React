@@ -27,8 +27,8 @@ export default function AuthenticatedUser(props) {
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/profile/eric-simons">
-              <img src="" class="user-pic" />
+            <a class="nav-link" href={`/profile/${props.username}`}>
+              <img src={props.image} class="user-pic" />
               {props.username}
             </a>
           </li>
