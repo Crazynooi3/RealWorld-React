@@ -53,10 +53,6 @@ export default function Register() {
       console.log(responseData.user.token);
       localStorage.setItem("token", responseData.user.token);
       navigate("/");
-      // اینجا می‌توانید اقدامات بعد از ورود موفق را انجام دهید
-      // مثلاً ذخیره توکن در localStorage یا هدایت به صفحه دیگر
-
-      // window.location.href = "/dashboard";
 
       return responseData; // برای استفاده در UI یا مدیریت بعدی
     } catch (error) {
