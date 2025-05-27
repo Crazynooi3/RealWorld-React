@@ -1,13 +1,33 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "../Context/Context";
 
 import UnauthenticatedUser from "../components/Header/UnauthenticatedUser";
 import AuthenticatedUser from "../components/Header/AuthenticatedUser";
 import Footer from "../components/Footer/Footer";
+import ArticlePreview from "../components/ArticlePreview/ArticlePreview";
 
 export default function Home() {
   const authContext = useContext(AuthContext);
-  console.log(authContext);
+  // console.log(authContext);
+  const [articleList, setArticleList] = useState();
+  const [articlesCount, setArticlesCount] = useState();
+
+  const getArticle = async () => {
+    try {
+      const request = await fetch(`http://localhost:3000/api/articles`);
+
+      const data = await request.json();
+      setArticleList(data);
+    } catch (error) {
+      console.log("error on line 18:", error);
+      return error;
+    }
+  };
+
+  useEffect(() => {
+    getArticle();
+  });
+
   return (
     <>
       {authContext.isLogedin ? (
@@ -44,6 +64,7 @@ export default function Home() {
                 </ul>
               </div>
 
+              <ArticlePreview />
               <div class="article-preview">
                 <div class="article-meta">
                   <a href="/profile/eric-simons">
