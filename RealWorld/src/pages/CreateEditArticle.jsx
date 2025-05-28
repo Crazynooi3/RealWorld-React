@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import * as YUP from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,13 +12,16 @@ const schema = YUP.object().shape({
   discription: YUP.string()
     .required("Discription is required")
     .min(10, "Min discription must be 10 letter")
-    .max(50, " Max discription must be 50 letter"),
+    .max(100, " Max discription must be 50 letter"),
   body: YUP.string()
     .min(20, "MIN body must be 20 letter")
     .required("body is required"),
 });
 
 export default function CreateEditArticle() {
+  const [tags, setTags] = useState([]);
+  const [newTag, setNewTag] = useState("");
+
   const authContext = useContext(AuthContext);
   const navigate = useNavigate();
   useEffect(() => {
@@ -31,9 +34,27 @@ export default function CreateEditArticle() {
     register,
     handleSubmit,
     formState: { errors, usSubmitting },
+    setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const handleAddTag = (e) => {
+    if (e.key === "Enter" && newTag.trim() !== "") {
+      e.preventDefault(); // جلوگیری از سابمیت فرم با Enter
+      if (!tags.includes(newTag.trim())) {
+        const updatedTags = [...tags, newTag.trim()];
+        setTags(updatedTags);
+        setValue("tags", updatedTags); // به‌روزرسانی تگ‌ها در فرم
+        setNewTag(""); // پاک کردن ورودی
+      }
+    }
+  };
+  const handleRemoveTag = (tagToRemove) => {
+    const updatedTags = tags.filter((tag) => tag !== tagToRemove);
+    setTags(updatedTags);
+    setValue("tags", updatedTags); // به‌روزرسانی تگ‌ها در فرم
+  };
 
   const onSubmit = async (data) => {
     try {
@@ -42,7 +63,7 @@ export default function CreateEditArticle() {
           body: data.body,
           description: data.discription,
           title: data.title,
-          tagList: ["IT", "Explore"],
+          tagList: data.tags,
         },
       };
 
@@ -61,19 +82,12 @@ export default function CreateEditArticle() {
         throw new Error(errorData.message || "خطا در ثبت مقاله در سایت");
       }
 
-      // دریافت داده‌های پاسخ
       const responseData = await response.json();
       console.log(" موفقیت‌آمیز:", responseData);
-      // console.log(responseData.user.token);
-      // localStorage.setItem("token", responseData.user.token);
-      // navigate("/");
-
-      return responseData; // برای استفاده در UI یا مدیریت بعدی
+      return responseData;
     } catch (error) {
       console.error("خطا در ورود:", error.message);
-      // نمایش خطا به کاربر (می‌توانید از state استفاده کنید)
-      // setError("serverError", { message: error.message });
-      throw error; // برای مدیریت در فرم
+      throw error;
     }
   };
 
@@ -127,15 +141,23 @@ export default function CreateEditArticle() {
                   </fieldset>
                   <fieldset class="form-group">
                     <input
+                      value={newTag}
+                      onChange={(e) => setNewTag(e.target.value)}
+                      onKeyDown={handleAddTag}
                       type="text"
                       class="form-control"
-                      placeholder="Enter tags"
+                      placeholder="Write tag and press Enter to add"
                     />
                     <div class="tag-list">
-                      <span class="tag-default tag-pill">
-                        {" "}
-                        <i class="ion-close-round"></i> tag{" "}
-                      </span>
+                      {tags.map((tag) => (
+                        <span key={tag} class="tag-default tag-pill">
+                          {tag}
+                          <i
+                            onClick={() => handleRemoveTag(tag)}
+                            class="ion-close-round"
+                          ></i>
+                        </span>
+                      ))}
                     </div>
                   </fieldset>
                   <button
