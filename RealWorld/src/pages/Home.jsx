@@ -42,6 +42,7 @@ export default function Home() {
         <AuthenticatedUser
           username={authContext.userInfos.username}
           image={authContext.userInfos.image}
+          page="Home"
         />
       ) : (
         <UnauthenticatedUser />

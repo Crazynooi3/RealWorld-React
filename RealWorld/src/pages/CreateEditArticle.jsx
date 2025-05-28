@@ -4,7 +4,7 @@ import AuthenticatedUser from "../components/Header/AuthenticatedUser";
 export default function CreateEditArticle() {
   return (
     <>
-      <AuthenticatedUser />
+      <AuthenticatedUser page="NewArticle" />
       <div class="editor-page">
         <div class="container page">
           <div class="row">
