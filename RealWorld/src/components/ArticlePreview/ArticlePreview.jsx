@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function ArticlePreview(props) {
   return (
@@ -8,22 +9,23 @@ export default function ArticlePreview(props) {
           <img src="http://i.imgur.com/Qr71crq.jpg" />
         </a>
         <div class="info">
-          <a href="/profile/eric-simons" class="author">
-            Eric Simons
-          </a>
-          <span class="date">January 20th</span>
+          <Link to={`/profile/${props.author}`} class="author">
+            {props.author}
+          </Link>
+          <span class="date">{props.createdAt}</span>
         </div>
         <button class="btn btn-outline-primary btn-sm pull-xs-right">
-          <i class="ion-heart"></i> 29
+          <i class="ion-heart"></i> {props.favoritesCount}
         </button>
       </div>
-      <a href="/article/how-to-build-webapps-that-scale" class="preview-link">
-        <h1>How to build webapps that scale</h1>
-        <p>This is the description for the post.</p>
+      <a href={`/article/${props.slug}`} class="preview-link">
+        <h1>{props.title}</h1>
+        <p>{props.description}</p>
         <span>Read more...</span>
         <ul class="tag-list">
-          <li class="tag-default tag-pill tag-outline">realworld</li>
-          <li class="tag-default tag-pill tag-outline">implementations</li>
+          {props.tagList.map((tag) => (
+            <li class="tag-default tag-pill tag-outline">{tag}</li>
+          ))}
         </ul>
       </a>
     </div>

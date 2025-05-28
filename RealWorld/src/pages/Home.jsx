@@ -9,7 +9,10 @@ import ArticlePreview from "../components/ArticlePreview/ArticlePreview";
 export default function Home() {
   const authContext = useContext(AuthContext);
   // console.log(authContext);
-  const [articleList, setArticleList] = useState();
+  const [articleList, setArticleList] = useState({
+    articles: [],
+    articlesCount: 0,
+  });
   const [articlesCount, setArticlesCount] = useState();
 
   const getArticle = async () => {
@@ -18,6 +21,7 @@ export default function Home() {
 
       const data = await request.json();
       setArticleList(data);
+      return data;
     } catch (error) {
       console.log("error on line 18:", error);
       return error;
@@ -26,7 +30,11 @@ export default function Home() {
 
   useEffect(() => {
     getArticle();
-  });
+  }, []);
+
+  useEffect(() => {
+    console.log(articleList);
+  }, [articleList]);
 
   return (
     <>
@@ -63,69 +71,18 @@ export default function Home() {
                   </li>
                 </ul>
               </div>
-
-              <ArticlePreview />
-              <div class="article-preview">
-                <div class="article-meta">
-                  <a href="/profile/eric-simons">
-                    <img src="http://i.imgur.com/Qr71crq.jpg" />
-                  </a>
-                  <div class="info">
-                    <a href="/profile/eric-simons" class="author">
-                      Eric Simons
-                    </a>
-                    <span class="date">January 20th</span>
-                  </div>
-                  <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                    <i class="ion-heart"></i> 29
-                  </button>
-                </div>
-                <a
-                  href="/article/how-to-build-webapps-that-scale"
-                  class="preview-link"
-                >
-                  <h1>How to build webapps that scale</h1>
-                  <p>This is the description for the post.</p>
-                  <span>Read more...</span>
-                  <ul class="tag-list">
-                    <li class="tag-default tag-pill tag-outline">realworld</li>
-                    <li class="tag-default tag-pill tag-outline">
-                      implementations
-                    </li>
-                  </ul>
-                </a>
-              </div>
-
-              <div class="article-preview">
-                <div class="article-meta">
-                  <a href="/profile/albert-pai">
-                    <img src="http://i.imgur.com/N4VcUeJ.jpg" />
-                  </a>
-                  <div class="info">
-                    <a href="/profile/albert-pai" class="author">
-                      Albert Pai
-                    </a>
-                    <span class="date">January 20th</span>
-                  </div>
-                  <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                    <i class="ion-heart"></i> 32
-                  </button>
-                </div>
-                <a href="/article/the-song-you" class="preview-link">
-                  <h1>
-                    The song you won't ever stop singing. No matter how hard you
-                    try.
-                  </h1>
-                  <p>This is the description for the post.</p>
-                  <span>Read more...</span>
-                  <ul class="tag-list">
-                    <li class="tag-default tag-pill tag-outline">realworld</li>
-                    <li class="tag-default tag-pill tag-outline">
-                      implementations
-                    </li>
-                  </ul>
-                </a>
-              </div>
+              {articleList.articles.map((article, index) => (
+                <ArticlePreview
+                  key={index + 1}
+                  author={article.author.username}
+                  title={article.title}
+                  favoritesCount={article.favoritesCount}
+                  description={article.description}
+                  slug={article.slug}
+                  tagList={article.tagList}
+                  createdAt={article.createdAt}
+                />
+              ))}
 
               <ul class="pagination">
                 <li class="page-item active">
