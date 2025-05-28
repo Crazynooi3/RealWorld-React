@@ -5,7 +5,7 @@ import AuthContext from "./Context/Context";
 
 function App() {
   const router = useRoutes(routes);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState();
   const [token, setToken] = useState(null);
   const [userInfos, setUserInfos] = useState(null);
   const login = () => {};
