@@ -1,12 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useActionData } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../../Context/Context";
 
 export default function ArticlePreview(props) {
+  const authContext = useContext(AuthContext);
   return (
     <div class="article-preview">
       <div class="article-meta">
         <a href="/profile/eric-simons">
-          <img src="http://i.imgur.com/Qr71crq.jpg" />
+          <img src={authContext.userInfos.image} />
         </a>
         <div class="info">
           <Link to={`/profile/${props.author}`} class="author">
