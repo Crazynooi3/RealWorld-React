@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AuthenticatedUser from "../components/Header/AuthenticatedUser";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Profile() {
   const param = useParams();
@@ -62,7 +63,7 @@ export default function Profile() {
           <div class="container">
             <div class="row">
               <div class="col-xs-12 col-md-10 offset-md-1">
-                <img src={currentUser.user.image} class="user-img" />
+                <img src={currentUser?.user?.image} class="user-img" />
                 <h4>{userProfile?.profile?.username || ""}</h4>
                 <p>
                   {userProfile?.profile?.bio ||
@@ -106,9 +107,9 @@ export default function Profile() {
               <div class="articles-toggle">
                 <ul class="nav nav-pills outline-active">
                   <li class="nav-item">
-                    <a class="nav-link active" href="">
+                    <Link class="nav-link active" to="">
                       My Articles
-                    </a>
+                    </Link>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="">

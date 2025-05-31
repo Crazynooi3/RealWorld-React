@@ -1,21 +1,22 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function AuthenticatedUser(props) {
   return (
     <nav class="navbar navbar-light">
       <div class="container">
-        <a class="navbar-brand" href="/">
+        <Link class="navbar-brand" to={"/"}>
           conduit
-        </a>
+        </Link>
         <ul class="nav navbar-nav pull-xs-right">
           <li class="nav-item">
             {/* <!-- Add "active" class when you're on that page" --> */}
-            <a
+            <Link
               class={`nav-link ${props.page === "Home" ? "active" : ""} `}
-              href="/"
+              to="/"
             >
               Home
-            </a>
+            </Link>
           </li>
           <li class="nav-item">
             <a
