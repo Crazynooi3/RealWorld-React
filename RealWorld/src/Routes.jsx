@@ -8,6 +8,8 @@ import Profile from "./pages/Profile";
 
 const routes = [
   { path: "/", element: <Home /> },
+  { path: "/globalfeed", element: <Home /> },
+  { path: "/yourFeed", element: <Home /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
   { path: "/settings", element: <Settings /> },
