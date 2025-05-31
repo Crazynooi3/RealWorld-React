@@ -58,10 +58,10 @@ export default function Home() {
     getYourFeedArticle();
   }, []);
 
-  useEffect(() => {
-    console.log(articleList);
-    console.log(feedArticleList);
-  }, [articleList]);
+  // useEffect(() => {
+  //   console.log(articleList);
+  //   console.log(feedArticleList);
+  // }, [articleList]);
 
   return (
     <>
@@ -131,7 +131,16 @@ export default function Home() {
                 ))
               ) : userFeed === "yourFeed" ? (
                 feedArticleList.articles.map((article) => (
-                  <ArticlePreviewFeed />
+                  <ArticlePreviewFeed
+                    author={article.author.username}
+                    image={article.author.image}
+                    title={article.title}
+                    favoritesCount={article.favoritesCount}
+                    description={article.description}
+                    slug={article.slug}
+                    tagList={article.tagList}
+                    createdAt={article.createdAt}
+                  />
                 ))
               ) : (
                 <span>111</span>
