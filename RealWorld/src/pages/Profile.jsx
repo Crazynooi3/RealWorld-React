@@ -11,8 +11,8 @@ export default function Profile() {
 
   useEffect(() => {
     const userToken = localStorage.getItem("token");
-    fetch(`http://localhost:3000/api/profiles/${param.username}/follow`, {
-      method: "POST",
+    fetch(`http://localhost:3000/api/profiles/${param.username}`, {
+      method: "GET",
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
@@ -29,6 +29,31 @@ export default function Profile() {
       .then((res) => res.json())
       .then((data) => setCurrentUser(data));
   }, []);
+
+  const follow = () => {
+    const userToken = localStorage.getItem("token");
+    fetch(`http://localhost:3000/api/profiles/${param.username}/follow`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setUserProfile(data));
+  };
+
+  const unFollow = () => {
+    const userToken = localStorage.getItem("token");
+    fetch(`http://localhost:3000/api/profiles/${param.username}/follow`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setUserProfile(data));
+  };
+
   return (
     <>
       <AuthenticatedUser />
@@ -43,24 +68,24 @@ export default function Profile() {
                   {userProfile?.profile?.bio ||
                     `Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, officiis!`}
                 </p>
-                {userProfile?.profile?.username !=
-                currentUser?.user?.username ? (
-                  <button class="btn btn-sm btn-outline-secondary action-btn">
-                    <i
-                      className={
-                        userProfile?.profile?.following
-                          ? "ion-minus-round"
-                          : "ion-plus-round"
-                      }
-                    ></i>
-                    &nbsp;
-                    {userProfile?.profile?.following
-                      ? `Unfollow ${userProfile?.profile?.username}`
-                      : `Follow ${userProfile?.profile?.username}`}
+                {userProfile.profile.following ? (
+                  <button
+                    onClick={() => unFollow()}
+                    class="btn btn-sm btn-outline-secondary action-btn"
+                  >
+                    <i className="ion-minus-round"></i>
+                    &nbsp; {`UnFollow ${userProfile?.profile?.username}`}
                   </button>
                 ) : (
-                  ""
+                  <button
+                    onClick={() => follow()}
+                    class="btn btn-sm btn-outline-secondary action-btn"
+                  >
+                    <i className="ion-plus-round"></i>
+                    &nbsp; {`Follow ${userProfile?.profile?.username}`}
+                  </button>
                 )}
+
                 {userProfile?.profile?.username ===
                 currentUser?.user?.username ? (
                   <button class="btn btn-sm btn-outline-secondary action-btn">
