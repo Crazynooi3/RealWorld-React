@@ -62,13 +62,13 @@ export default function Profile() {
           <div class="container">
             <div class="row">
               <div class="col-xs-12 col-md-10 offset-md-1">
-                <img src="http://i.imgur.com/Qr71crq.jpg" class="user-img" />
+                <img src={currentUser.user.image} class="user-img" />
                 <h4>{userProfile?.profile?.username || ""}</h4>
                 <p>
                   {userProfile?.profile?.bio ||
                     `Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, officiis!`}
                 </p>
-                {userProfile.profile.following ? (
+                {userProfile?.profile?.following ? (
                   <button
                     onClick={() => unFollow()}
                     class="btn btn-sm btn-outline-secondary action-btn"
