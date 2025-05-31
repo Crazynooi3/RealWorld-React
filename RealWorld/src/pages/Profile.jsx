@@ -1,7 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AuthenticatedUser from "../components/Header/AuthenticatedUser";
+import { useParams } from "react-router-dom";
 
 export default function Profile() {
+  const param = useParams();
+  const [userProfile, setUserProfile] = useState();
+  const [currentUser, setCurrentUser] = useState();
+  console.log(userProfile);
+  console.log(currentUser);
+
+  useEffect(() => {
+    const userToken = localStorage.getItem("token");
+    fetch(`http://localhost:3000/api/profiles/${param.username}/follow`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setUserProfile(data));
+
+    fetch(`http://localhost:3000/api/user`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setCurrentUser(data));
+  }, []);
   return (
     <>
       <AuthenticatedUser />
@@ -11,19 +38,38 @@ export default function Profile() {
             <div class="row">
               <div class="col-xs-12 col-md-10 offset-md-1">
                 <img src="http://i.imgur.com/Qr71crq.jpg" class="user-img" />
-                <h4>Eric Simons</h4>
+                <h4>{userProfile?.profile?.username || ""}</h4>
                 <p>
-                  Cofounder @GoThinkster, lived in Aol's HQ for a few months,
-                  kinda looks like Peeta from the Hunger Games
+                  {userProfile?.profile?.bio ||
+                    `Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, officiis!`}
                 </p>
-                <button class="btn btn-sm btn-outline-secondary action-btn">
-                  <i class="ion-plus-round"></i>
-                  &nbsp; Follow Eric Simons
-                </button>
-                <button class="btn btn-sm btn-outline-secondary action-btn">
-                  <i class="ion-gear-a"></i>
-                  &nbsp; Edit Profile Settings
-                </button>
+                {userProfile?.profile?.username !=
+                currentUser?.user?.username ? (
+                  <button class="btn btn-sm btn-outline-secondary action-btn">
+                    <i
+                      className={
+                        userProfile?.profile?.following
+                          ? "ion-minus-round"
+                          : "ion-plus-round"
+                      }
+                    ></i>
+                    &nbsp;
+                    {userProfile?.profile?.following
+                      ? `Unfollow ${userProfile?.profile?.username}`
+                      : `Follow ${userProfile?.profile?.username}`}
+                  </button>
+                ) : (
+                  ""
+                )}
+                {userProfile?.profile?.username ===
+                currentUser?.user?.username ? (
+                  <button class="btn btn-sm btn-outline-secondary action-btn">
+                    <i class="ion-gear-a"></i>
+                    &nbsp; "Edit Profile Settings"
+                  </button>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           </div>
