@@ -16,15 +16,22 @@ export default function Home() {
     articles: [],
     articlesCount: 0,
   });
+
   const [feedArticleList, setFeedArticleList] = useState({
     articles: [],
     articlesCount: 0,
   });
-  // console.log(articleList);
 
   const getArticle = async () => {
+    const userToken = localStorage.getItem("token");
+
     try {
-      const request = await fetch(`http://localhost:3000/api/articles`);
+      const request = await fetch(`http://localhost:3000/api/articles`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
 
       const data = await request.json();
       setArticleList(data);
@@ -34,7 +41,6 @@ export default function Home() {
       return error;
     }
   };
-
   const getYourFeedArticle = async () => {
     const userToken = localStorage.getItem("token");
     try {
@@ -53,16 +59,41 @@ export default function Home() {
       return error;
     }
   };
+
   useEffect(() => {
     getArticle();
     getYourFeedArticle();
   }, []);
 
-  // useEffect(() => {
-  //   console.log(articleList);
-  //   console.log(feedArticleList);
-  // }, [articleList]);
+  const favorite = (slug) => {
+    const userToken = localStorage.getItem("token");
+    fetch(`http://localhost:3000/api/articles/${slug}/favorite`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        getArticle();
+        getYourFeedArticle();
+      });
+  };
 
+  const UnFavorite = (slug) => {
+    const userToken = localStorage.getItem("token");
+    fetch(`http://localhost:3000/api/articles/${slug}/favorite`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        getArticle();
+        getYourFeedArticle();
+      });
+  };
   return (
     <>
       {authContext.isLogedin ? (
@@ -127,6 +158,9 @@ export default function Home() {
                     slug={article.slug}
                     tagList={article.tagList}
                     createdAt={article.createdAt}
+                    favorited={article.favorited}
+                    favoriteFunc={favorite}
+                    unFavoriteFunc={UnFavorite}
                   />
                 ))
               ) : userFeed === "yourFeed" ? (
@@ -140,6 +174,9 @@ export default function Home() {
                     slug={article.slug}
                     tagList={article.tagList}
                     createdAt={article.createdAt}
+                    favorited={article.favorited}
+                    favoriteFunc={favorite}
+                    unFavoriteFunc={UnFavorite}
                   />
                 ))
               ) : (

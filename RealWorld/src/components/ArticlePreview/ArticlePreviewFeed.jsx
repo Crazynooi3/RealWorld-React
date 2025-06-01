@@ -17,7 +17,16 @@ export default function ArticlePreviewFeed(props) {
           </Link>
           <span class="date">{props.createdAt}</span>
         </div>
-        <button class="btn btn-outline-primary btn-sm pull-xs-right">
+        <button
+          onClick={() => {
+            props.favorited
+              ? props.unFavoriteFunc(props.slug)
+              : props.favoriteFunc(props.slug);
+          }}
+          class={`btn btn-outline-primary  btn-sm pull-xs-right ${
+            props?.favorited ? "active" : ""
+          }`}
+        >
           <i class="ion-heart"></i> {props.favoritesCount}
         </button>
       </div>
