@@ -41,7 +41,7 @@ export default function ArticlePreview(props) {
           <i className="ion-heart"></i> {props.favoritesCount}
         </button>
       </div>
-      <a href={`/article/${props.slug}`} className="preview-link">
+      <Link to={`/article/${props.slug}`} className="preview-link">
         <h1>{props.title}</h1>
         <p>{props.description}</p>
         <span>Read more...</span>
@@ -52,7 +52,7 @@ export default function ArticlePreview(props) {
             </li>
           ))}
         </ul>
-      </a>
+      </Link>
     </div>
   );
 }

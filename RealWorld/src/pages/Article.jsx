@@ -1,15 +1,21 @@
-import React, { use, useState, useContext, useCallback } from "react";
+import React, {
+  use,
+  useState,
+  useContext,
+  useCallback,
+  useEffect,
+} from "react";
 import { useParams } from "react-router-dom";
 
 import AuthenticatedUser from "../components/Header/AuthenticatedUser";
 import AuthContext from "../Context/Context";
 
 export default function Article() {
-  // const authContext = useContext(AuthContext);
-  // console.log(authContext);
+  const authContext = useContext(AuthContext);
 
   const { articleSlug } = useParams();
   const [articleDetail, setArticleDetail] = useState({});
+  const [isAuthor, setIsAuthor] = useState(false);
 
   const getArticle = async () => {
     const userToken = localStorage.getItem("token");
@@ -34,7 +40,25 @@ export default function Article() {
     }
   };
 
-  getArticle();
+  const isAuthorFunc = () => {
+    let articleAuthor = articleDetail?.article?.author?.username;
+    let currentUser = authContext?.userInfos?.username;
+
+    if (articleAuthor && currentUser && articleAuthor === currentUser) {
+      console.log("true", articleAuthor, currentUser);
+
+      setIsAuthor(true);
+    } else {
+      console.log("false", articleAuthor, currentUser);
+      setIsAuthor(false);
+    }
+  };
+  useEffect(() => {
+    getArticle();
+  }, [articleSlug, authContext.token]);
+  useEffect(() => {
+    isAuthorFunc();
+  }, [articleDetail, authContext.userInfos?.username]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -54,53 +78,64 @@ export default function Article() {
         Comments section at bottom of page
         Delete comment button (only shown to comment’s author)
         */}
-      <AuthenticatedUser page={""} />
-      <div class="article-page">
-        <div class="banner">
-          <div class="container">
+      <AuthenticatedUser
+        page={""}
+        username={authContext?.userInfos?.username}
+        image={authContext?.userInfos?.image}
+      />
+      <div className="article-page">
+        <div className="banner">
+          <div className="container">
             <h1>{articleDetail?.article?.title}</h1>
 
-            <div class="article-meta">
+            <div className="article-meta">
               <a href="/profile/eric-simons">
                 <img src={articleDetail?.article?.author?.image} />
               </a>
-              <div class="info">
-                <a href="/profile/eric-simons" class="author">
+              <div className="info">
+                <a href="/profile/eric-simons" className="author">
                   {articleDetail?.article?.author?.username}
                 </a>
-                <span class="date">
+                <span className="date">
                   {formatDate(articleDetail?.article?.createdAt)}
                 </span>
               </div>
-              <button class="btn btn-sm btn-outline-secondary">
-                <i class="ion-plus-round"></i>
+              <button className="btn btn-sm btn-outline-secondary">
+                <i className="ion-plus-round"></i>
                 &nbsp; {`Follow ${articleDetail?.article?.author?.username}`}{" "}
-                <span class="counter">(10)</span>
+                <span className="counter">(10)</span>
               </button>
               &nbsp;&nbsp;
-              <button class="btn btn-sm btn-outline-primary">
-                <i class="ion-heart"></i>
-                &nbsp; Favorite Post <span class="counter">(29)</span>
+              <button className="btn btn-sm btn-outline-primary">
+                <i className="ion-heart"></i>
+                &nbsp; Favorite Post <span className="counter">(29)</span>
               </button>
-              <button class="btn btn-sm btn-outline-secondary">
-                <i class="ion-edit"></i> Edit Article
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="ion-trash-a"></i> Delete Article
-              </button>
+              {isAuthor && (
+                <>
+                  <button className="btn btn-sm btn-outline-secondary">
+                    <i className="ion-edit"></i> Edit Article
+                  </button>
+                  <button className="btn btn-sm btn-outline-danger">
+                    <i className="ion-trash-a"></i> Delete Article
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
 
-        <div class="container page">
-          <div class="row article-content">
-            <div class="col-md-12">
+        <div className="container page">
+          <div className="row article-content">
+            <div className="col-md-12">
               <p>{articleDetail?.article?.description}</p>
               <h2 id="introducing-ionic">{articleDetail?.article?.title}</h2>
               <p>{articleDetail?.article?.body}</p>
-              <ul class="tag-list">
+              <ul className="tag-list">
                 {articleDetail?.article?.tagList.map((tag, index) => (
-                  <li key={index + 1} class="tag-default tag-pill tag-outline">
+                  <li
+                    key={index + 1}
+                    className="tag-default tag-pill tag-outline"
+                  >
                     {tag}
                   </li>
                 ))}
@@ -110,99 +145,105 @@ export default function Article() {
 
           <hr />
 
-          <div class="article-actions">
-            <div class="article-meta">
+          <div className="article-actions">
+            <div className="article-meta">
               <a href="profile.html">
                 <img src={articleDetail?.article?.author?.image} />
               </a>
-              <div class="info">
-                <a href="" class="author">
+              <div className="info">
+                <a href="" className="author">
                   {articleDetail?.article?.author?.username}
                 </a>
-                <span class="date">
+                <span className="date">
                   {formatDate(articleDetail?.article?.createdAt)}
                 </span>
               </div>
-              <button class="btn btn-sm btn-outline-secondary ">
-                <i class="ion-plus-round"></i>
+              <button className="btn btn-sm btn-outline-secondary ">
+                <i className="ion-plus-round"></i>
                 &nbsp; {`Follow ${articleDetail?.article?.author?.username}`}
               </button>
               &nbsp;
-              <button class="btn btn-sm btn-outline-primary">
-                <i class="ion-heart"></i>
-                &nbsp; Favorite Article <span class="counter">(29)</span>
+              <button className="btn btn-sm btn-outline-primary">
+                <i className="ion-heart"></i>
+                &nbsp; Favorite Article <span className="counter">(29)</span>
               </button>
-              <button class="btn btn-sm btn-outline-secondary">
-                <i class="ion-edit"></i> Edit Article
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="ion-trash-a"></i> Delete Article
-              </button>
+              {isAuthor && (
+                <>
+                  <button className="btn btn-sm btn-outline-secondary">
+                    <i className="ion-edit"></i> Edit Article
+                  </button>
+                  <button className="btn btn-sm btn-outline-danger">
+                    <i className="ion-trash-a"></i> Delete Article
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
-          <div class="row">
-            <div class="col-xs-12 col-md-8 offset-md-2">
-              <form class="card comment-form">
-                <div class="card-block">
+          <div className="row">
+            <div className="col-xs-12 col-md-8 offset-md-2">
+              <form className="card comment-form">
+                <div className="card-block">
                   <textarea
-                    class="form-control"
+                    className="form-control"
                     placeholder="Write a comment..."
                     rows="3"
                   ></textarea>
                 </div>
-                <div class="card-footer">
+                <div className="card-footer">
                   <img
                     src="http://i.imgur.com/Qr71crq.jpg"
-                    class="comment-author-img"
+                    className="comment-author-img"
                   />
-                  <button class="btn btn-sm btn-primary">Post Comment</button>
+                  <button className="btn btn-sm btn-primary">
+                    Post Comment
+                  </button>
                 </div>
               </form>
 
-              <div class="card">
-                <div class="card-block">
-                  <p class="card-text">
+              <div className="card">
+                <div className="card-block">
+                  <p className="card-text">
                     With supporting text below as a natural lead-in to
                     additional content.
                   </p>
                 </div>
-                <div class="card-footer">
-                  <a href="/profile/author" class="comment-author">
+                <div className="card-footer">
+                  <a href="/profile/author" className="comment-author">
                     <img
                       src="http://i.imgur.com/Qr71crq.jpg"
-                      class="comment-author-img"
+                      className="comment-author-img"
                     />
                   </a>
                   &nbsp;
-                  <a href="/profile/jacob-schmidt" class="comment-author">
+                  <a href="/profile/jacob-schmidt" className="comment-author">
                     Jacob Schmidt
                   </a>
-                  <span class="date-posted">Dec 29th</span>
+                  <span className="date-posted">Dec 29th</span>
                 </div>
               </div>
 
-              <div class="card">
-                <div class="card-block">
-                  <p class="card-text">
+              <div className="card">
+                <div className="card-block">
+                  <p className="card-text">
                     With supporting text below as a natural lead-in to
                     additional content.
                   </p>
                 </div>
-                <div class="card-footer">
-                  <a href="/profile/author" class="comment-author">
+                <div className="card-footer">
+                  <a href="/profile/author" className="comment-author">
                     <img
                       src="http://i.imgur.com/Qr71crq.jpg"
-                      class="comment-author-img"
+                      className="comment-author-img"
                     />
                   </a>
                   &nbsp;
-                  <a href="/profile/jacob-schmidt" class="comment-author">
+                  <a href="/profile/jacob-schmidt" className="comment-author">
                     Jacob Schmidt
                   </a>
-                  <span class="date-posted">Dec 29th</span>
-                  <span class="mod-options">
-                    <i class="ion-trash-a"></i>
+                  <span className="date-posted">Dec 29th</span>
+                  <span className="mod-options">
+                    <i className="ion-trash-a"></i>
                   </span>
                 </div>
               </div>
