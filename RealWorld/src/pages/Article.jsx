@@ -1,7 +1,51 @@
-import React from "react";
+import React, { use, useState, useContext, useCallback } from "react";
+import { useParams } from "react-router-dom";
+
 import AuthenticatedUser from "../components/Header/AuthenticatedUser";
+import AuthContext from "../Context/Context";
 
 export default function Article() {
+  // const authContext = useContext(AuthContext);
+  // console.log(authContext);
+
+  const { articleSlug } = useParams();
+  const [articleDetail, setArticleDetail] = useState({});
+
+  const getArticle = async () => {
+    const userToken = localStorage.getItem("token");
+    try {
+      const request = await fetch(
+        `http://localhost:3000/api/articles/${articleSlug}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
+
+      const data = await request.json();
+      setArticleDetail(data);
+
+      return data;
+    } catch (error) {
+      console.log("error on line 18:", error);
+      return error;
+    }
+  };
+
+  getArticle();
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    return date.toLocaleDateString("en-US", options); // خروجی: 28 May 2025
+  };
+
   return (
     <>
       {/* Article page (URL: /#/article/article-slug-here )
@@ -10,25 +54,28 @@ export default function Article() {
         Comments section at bottom of page
         Delete comment button (only shown to comment’s author)
         */}
-      <AuthenticatedUser />
+      <AuthenticatedUser page={""} />
       <div class="article-page">
         <div class="banner">
           <div class="container">
-            <h1>How to build webapps that scale</h1>
+            <h1>{articleDetail?.article?.title}</h1>
 
             <div class="article-meta">
               <a href="/profile/eric-simons">
-                <img src="http://i.imgur.com/Qr71crq.jpg" />
+                <img src={articleDetail?.article?.author?.image} />
               </a>
               <div class="info">
                 <a href="/profile/eric-simons" class="author">
-                  Eric Simons
+                  {articleDetail?.article?.author?.username}
                 </a>
-                <span class="date">January 20th</span>
+                <span class="date">
+                  {formatDate(articleDetail?.article?.createdAt)}
+                </span>
               </div>
               <button class="btn btn-sm btn-outline-secondary">
                 <i class="ion-plus-round"></i>
-                &nbsp; Follow Eric Simons <span class="counter">(10)</span>
+                &nbsp; {`Follow ${articleDetail?.article?.author?.username}`}{" "}
+                <span class="counter">(10)</span>
               </button>
               &nbsp;&nbsp;
               <button class="btn btn-sm btn-outline-primary">
@@ -48,19 +95,15 @@ export default function Article() {
         <div class="container page">
           <div class="row article-content">
             <div class="col-md-12">
-              <p>
-                Web development technologies have evolved at an incredible clip
-                over the past few years.
-              </p>
-              <h2 id="introducing-ionic">Introducing RealWorld.</h2>
-              <p>
-                It's a great solution for learning how other frameworks work.
-              </p>
+              <p>{articleDetail?.article?.description}</p>
+              <h2 id="introducing-ionic">{articleDetail?.article?.title}</h2>
+              <p>{articleDetail?.article?.body}</p>
               <ul class="tag-list">
-                <li class="tag-default tag-pill tag-outline">realworld</li>
-                <li class="tag-default tag-pill tag-outline">
-                  implementations
-                </li>
+                {articleDetail?.article?.tagList.map((tag, index) => (
+                  <li key={index + 1} class="tag-default tag-pill tag-outline">
+                    {tag}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -70,17 +113,19 @@ export default function Article() {
           <div class="article-actions">
             <div class="article-meta">
               <a href="profile.html">
-                <img src="http://i.imgur.com/Qr71crq.jpg" />
+                <img src={articleDetail?.article?.author?.image} />
               </a>
               <div class="info">
                 <a href="" class="author">
-                  Eric Simons
+                  {articleDetail?.article?.author?.username}
                 </a>
-                <span class="date">January 20th</span>
+                <span class="date">
+                  {formatDate(articleDetail?.article?.createdAt)}
+                </span>
               </div>
-              <button class="btn btn-sm btn-outline-secondary">
+              <button class="btn btn-sm btn-outline-secondary ">
                 <i class="ion-plus-round"></i>
-                &nbsp; Follow Eric Simons
+                &nbsp; {`Follow ${articleDetail?.article?.author?.username}`}
               </button>
               &nbsp;
               <button class="btn btn-sm btn-outline-primary">
