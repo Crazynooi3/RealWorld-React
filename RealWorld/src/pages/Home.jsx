@@ -7,6 +7,7 @@ import AuthenticatedUser from "../components/Header/AuthenticatedUser";
 import Footer from "../components/Footer/Footer";
 import ArticlePreview from "../components/ArticlePreview/ArticlePreview";
 import ArticlePreviewFeed from "../components/ArticlePreview/ArticlePreviewFeed";
+import Pagination from "../components/Pagination/Pagination";
 
 export default function Home() {
   const [userFeed, setUserFeed] = useState("globalFeed");
@@ -147,69 +148,45 @@ export default function Home() {
                   </li>
                 </ul>
               </div>
-              {userFeed === "globalFeed" ? (
-                articleList.articles.map((article) => (
-                  <ArticlePreview
-                    author={article.author.username}
-                    image={article.author.image}
-                    title={article.title}
-                    favoritesCount={article.favoritesCount}
-                    description={article.description}
-                    slug={article.slug}
-                    tagList={article.tagList}
-                    createdAt={article.createdAt}
-                    favorited={article.favorited}
-                    favoriteFunc={favorite}
-                    unFavoriteFunc={UnFavorite}
-                  />
-                ))
-              ) : userFeed === "yourFeed" ? (
-                feedArticleList.articles.map((article) => (
-                  <ArticlePreviewFeed
-                    author={article.author.username}
-                    image={article.author.image}
-                    title={article.title}
-                    favoritesCount={article.favoritesCount}
-                    description={article.description}
-                    slug={article.slug}
-                    tagList={article.tagList}
-                    createdAt={article.createdAt}
-                    favorited={article.favorited}
-                    favoriteFunc={favorite}
-                    unFavoriteFunc={UnFavorite}
-                  />
-                ))
-              ) : (
-                <span>111</span>
-              )}
+              {userFeed === "globalFeed"
+                ? articleList.articles.map((article) => (
+                    <ArticlePreview
+                      author={article.author.username}
+                      image={article.author.image}
+                      title={article.title}
+                      favoritesCount={article.favoritesCount}
+                      description={article.description}
+                      slug={article.slug}
+                      tagList={article.tagList}
+                      createdAt={article.createdAt}
+                      favorited={article.favorited}
+                      favoriteFunc={favorite}
+                      unFavoriteFunc={UnFavorite}
+                    />
+                  ))
+                : userFeed === "yourFeed"
+                ? feedArticleList.articles.map((article) => (
+                    <ArticlePreviewFeed
+                      author={article.author.username}
+                      image={article.author.image}
+                      title={article.title}
+                      favoritesCount={article.favoritesCount}
+                      description={article.description}
+                      slug={article.slug}
+                      tagList={article.tagList}
+                      createdAt={article.createdAt}
+                      favorited={article.favorited}
+                      favoriteFunc={favorite}
+                      unFavoriteFunc={UnFavorite}
+                    />
+                  ))
+                : ""}
 
               {userFeed === "globalFeed" && articleList.articlesCount > 0 ? (
-                <ul class="pagination">
-                  <li class="page-item active">
-                    <a class="page-link" href="">
-                      1
-                    </a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="">
-                      2
-                    </a>
-                  </li>
-                </ul>
+                <Pagination />
               ) : userFeed === "yourFeed" &&
                 feedArticleList.articlesCount > 0 ? (
-                <ul class="pagination">
-                  <li class="page-item active">
-                    <a class="page-link" href="">
-                      1
-                    </a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="">
-                      2
-                    </a>
-                  </li>
-                </ul>
+                <Pagination />
               ) : (
                 ""
               )}
