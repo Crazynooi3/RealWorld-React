@@ -14,7 +14,6 @@ export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const articlesPerPage = 10;
-  console.log(currentPage);
 
   const authContext = useContext(AuthContext);
   const [articleList, setArticleList] = useState({
@@ -119,26 +118,26 @@ export default function Home() {
       ) : (
         <UnauthenticatedUser />
       )}
-      <div class="home-page">
-        <div class="banner">
-          <div class="container">
-            <h1 class="logo-font">conduit</h1>
+      <div className="home-page">
+        <div className="banner">
+          <div className="container">
+            <h1 className="logo-font">conduit</h1>
             <p>A place to share your knowledge.</p>
           </div>
         </div>
 
-        <div class="container page">
-          <div class="row">
-            <div class="col-md-9">
-              <div class="feed-toggle">
-                <ul class="nav nav-pills outline-active">
-                  <li class="nav-item">
+        <div className="container page">
+          <div className="row">
+            <div className="col-md-9">
+              <div className="feed-toggle">
+                <ul className="nav nav-pills outline-active">
+                  <li className="nav-item">
                     <Link
                       onClick={() => {
                         setUserFeed("yourFeed");
                         // getYourFeedArticle();
                       }}
-                      class={`nav-link ${
+                      className={`nav-link ${
                         userFeed === "yourFeed" ? "active" : ""
                       }`}
                       to={"/yourFeed"}
@@ -146,12 +145,12 @@ export default function Home() {
                       Your Feed
                     </Link>
                   </li>
-                  <li class="nav-item">
+                  <li className="nav-item">
                     <Link
                       onClick={() => {
                         setUserFeed("globalFeed");
                       }}
-                      class={`nav-link ${
+                      className={`nav-link ${
                         userFeed === "globalFeed" ? "active" : ""
                       }`}
                       to={"/globalFeed"}
@@ -213,7 +212,7 @@ export default function Home() {
               )}
             </div>
 
-            <div class="col-md-3">
+            <div className="col-md-3">
               <div class="sidebar">
                 <p>Popular Tags</p>
 
