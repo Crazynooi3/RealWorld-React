@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "../Context/Context";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import UnauthenticatedUser from "../components/Header/UnauthenticatedUser";
 import AuthenticatedUser from "../components/Header/AuthenticatedUser";
@@ -11,6 +11,10 @@ import Pagination from "../components/Pagination/Pagination";
 
 export default function Home() {
   const [userFeed, setUserFeed] = useState("globalFeed");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const articlesPerPage = 10;
+  console.log(currentPage);
 
   const authContext = useContext(AuthContext);
   const [articleList, setArticleList] = useState({
@@ -23,16 +27,20 @@ export default function Home() {
     articlesCount: 0,
   });
 
-  const getArticle = async () => {
-    const userToken = localStorage.getItem("token");
+  // const [currentPage, setCurrentPage] = useState(1);
 
+  const getArticle = async (offset, limit) => {
+    const userToken = localStorage.getItem("token");
     try {
-      const request = await fetch(`http://localhost:3000/api/articles`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
+      const request = await fetch(
+        `http://localhost:3000/api/articles?offset=${offset}&limit=${limit}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
 
       const data = await request.json();
       setArticleList(data);
@@ -62,9 +70,14 @@ export default function Home() {
   };
 
   useEffect(() => {
-    getArticle();
-    getYourFeedArticle();
-  }, []);
+    if (userFeed === "globalFeed") {
+      const offset = (currentPage - 1) * articlesPerPage;
+      getArticle(offset, articlesPerPage);
+    } else if (userFeed === "yourFeed") {
+      const offset = (currentPage - 1) * articlesPerPage;
+      getYourFeedArticle(offset, articlesPerPage);
+    }
+  }, [currentPage, userFeed, authContext.token]);
 
   const favorite = (slug) => {
     const userToken = localStorage.getItem("token");
@@ -151,6 +164,7 @@ export default function Home() {
               {userFeed === "globalFeed"
                 ? articleList.articles.map((article) => (
                     <ArticlePreview
+                      key={article.slug}
                       author={article.author.username}
                       image={article.author.image}
                       title={article.title}
@@ -182,13 +196,20 @@ export default function Home() {
                   ))
                 : ""}
 
-              {userFeed === "globalFeed" && articleList.articlesCount > 0 ? (
-                <Pagination />
-              ) : userFeed === "yourFeed" &&
-                feedArticleList.articlesCount > 0 ? (
-                <Pagination />
-              ) : (
-                ""
+              {userFeed === "globalFeed" && articleList.articlesCount > 0 && (
+                <Pagination
+                  pages={Math.ceil(articleList.articlesCount / articlesPerPage)}
+                  currentPage={currentPage}
+                />
+              )}
+
+              {userFeed === "yourFeed" && feedArticleList.articlesCount > 0 && (
+                <Pagination
+                  pages={Math.ceil(
+                    feedArticleList.articlesCount / articlesPerPage
+                  )}
+                  currentPage={currentPage}
+                />
               )}
             </div>
 

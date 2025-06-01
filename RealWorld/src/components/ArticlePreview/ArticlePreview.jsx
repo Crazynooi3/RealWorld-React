@@ -46,8 +46,10 @@ export default function ArticlePreview(props) {
         <p>{props.description}</p>
         <span>Read more...</span>
         <ul class="tag-list">
-          {props.tagList.map((tag) => (
-            <li class="tag-default tag-pill tag-outline">{tag}</li>
+          {props.tagList.map((tag, index) => (
+            <li key={index + 1} class="tag-default tag-pill tag-outline">
+              {tag}
+            </li>
           ))}
         </ul>
       </a>

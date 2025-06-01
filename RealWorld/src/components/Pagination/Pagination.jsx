@@ -1,18 +1,21 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-export default function Pagination() {
+export default function Pagination(props) {
   return (
     <ul class="pagination">
-      <li class="page-item active">
-        <a class="page-link" href="">
-          1
-        </a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" href="">
-          2
-        </a>
-      </li>
+      {Array.from({ length: props.pages }, (_, index) => (
+        <li
+          key={index + 1}
+          className={`page-item ${
+            props.currentPage === index + 1 ? "active" : ""
+          }`}
+        >
+          <Link className="page-link" to={`?page=${index + 1}`}>
+            {index + 1}
+          </Link>
+        </li>
+      ))}
     </ul>
   );
 }
