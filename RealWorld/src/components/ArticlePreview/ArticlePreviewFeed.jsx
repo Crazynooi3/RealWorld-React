@@ -5,6 +5,15 @@ import AuthContext from "../../Context/Context";
 
 export default function ArticlePreviewFeed(props) {
   const authContext = useContext(AuthContext);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    return date.toLocaleDateString("en-US", options); // خروجی: 28 May 2025
+  };
   return (
     <div class="article-preview">
       <div class="article-meta">
@@ -15,7 +24,7 @@ export default function ArticlePreviewFeed(props) {
           <Link to={`/profile/${props.author}`} class="author">
             {props.author}
           </Link>
-          <span class="date">{props.createdAt}</span>
+          <span class="date">{formatDate(props.createdAt)}</span>
         </div>
         <button
           onClick={() => {
