@@ -3,42 +3,46 @@ import { Link } from "react-router-dom";
 
 export default function AuthenticatedUser(props) {
   return (
-    <nav class="navbar navbar-light">
-      <div class="container">
-        <Link class="navbar-brand" to={"/"}>
+    <nav className="navbar navbar-light">
+      <div className="container">
+        <Link className="navbar-brand" to={"/"}>
           conduit
         </Link>
-        <ul class="nav navbar-nav pull-xs-right">
-          <li class="nav-item">
-            {/* <!-- Add "active" class when you're on that page" --> */}
+        <ul className="nav navbar-nav pull-xs-right">
+          <li className="nav-item">
+            {/* <!-- Add "active" className when you're on that page" --> */}
             <Link
-              class={`nav-link ${props.page === "Home" ? "active" : ""} `}
+              className={`nav-link ${props.page === "Home" ? "active" : ""} `}
               to="/"
             >
               Home
             </Link>
           </li>
-          <li class="nav-item">
+          <li className="nav-item">
             <a
-              class={`nav-link ${props.page === "NewArticle" ? "active" : ""} `}
+              className={`nav-link ${
+                props.page === "NewArticle" ? "active" : ""
+              } `}
               href="/editor"
             >
               {" "}
-              <i class="ion-compose"></i>&nbsp;New Article{" "}
+              <i className="ion-compose"></i>&nbsp;New Article{" "}
             </a>
           </li>
-          <li class="nav-item">
+          <li className="nav-item">
             <a
-              class={`nav-link ${props.page === "Settings" ? "active" : ""} `}
+              className={`nav-link ${
+                props.page === "Settings" ? "active" : ""
+              } `}
               href="/settings"
             >
               {" "}
-              <i class="ion-gear-a"></i>&nbsp;Settings{" "}
+              <i className="ion-gear-a"></i>&nbsp;Settings{" "}
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href={`/profile/${props.username}`}>
-              <img src={props.image} class="user-pic" />
+          <li className="nav-item">
+            <a className="nav-link" href={`/profile/${props.username}`}>
+              <img src={props.image} className="user-pic" />
               {props.username}
             </a>
           </li>
