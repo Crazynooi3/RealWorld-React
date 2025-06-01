@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Pagination(props) {
   return (
-    <ul class="pagination">
+    <ul className="pagination">
       {Array.from({ length: props.pages }, (_, index) => (
         <li
           key={index + 1}
