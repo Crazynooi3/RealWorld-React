@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import AuthenticatedUser from "../components/Header/AuthenticatedUser";
 import AuthContext from "../Context/Context";
@@ -45,11 +45,10 @@ export default function Article() {
     let currentUser = authContext?.userInfos?.username;
 
     if (articleAuthor && currentUser && articleAuthor === currentUser) {
-      console.log("true", articleAuthor, currentUser);
-
+      // console.log("true", articleAuthor, currentUser);
       setIsAuthor(true);
     } else {
-      console.log("false", articleAuthor, currentUser);
+      // console.log("false", articleAuthor, currentUser);
       setIsAuthor(false);
     }
   };
@@ -112,9 +111,11 @@ export default function Article() {
               </button>
               {isAuthor && (
                 <>
-                  <button className="btn btn-sm btn-outline-secondary">
-                    <i className="ion-edit"></i> Edit Article
-                  </button>
+                  <Link to={`/editor/${articleSlug}`}>
+                    <button className="btn btn-sm btn-outline-secondary">
+                      <i className="ion-edit"></i> Edit Article
+                    </button>
+                  </Link>
                   <button className="btn btn-sm btn-outline-danger">
                     <i className="ion-trash-a"></i> Delete Article
                   </button>
@@ -169,9 +170,12 @@ export default function Article() {
               </button>
               {isAuthor && (
                 <>
-                  <button className="btn btn-sm btn-outline-secondary">
-                    <i className="ion-edit"></i> Edit Article
-                  </button>
+                  <Link to={`/editor/${articleSlug}`}>
+                    <button className="btn btn-sm btn-outline-secondary">
+                      <i className="ion-edit"></i> Edit Article
+                    </button>
+                  </Link>
+
                   <button className="btn btn-sm btn-outline-danger">
                     <i className="ion-trash-a"></i> Delete Article
                   </button>

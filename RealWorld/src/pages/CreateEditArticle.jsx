@@ -4,32 +4,41 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useContext } from "react";
 import AuthContext from "../Context/Context";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AuthenticatedUser from "../components/Header/AuthenticatedUser";
 
 const schema = YUP.object().shape({
   title: YUP.string().required("Title is required"),
-  discription: YUP.string()
-    .required("Discription is required")
-    .min(10, "Min discription must be 10 letter")
-    .max(100, " Max discription must be 50 letter"),
+  description: YUP.string()
+    .required("description is required")
+    .min(10, "Min description must be 10 letter")
+    .max(100, " Max description must be 50 letter"),
   body: YUP.string()
     .min(20, "MIN body must be 20 letter")
     .required("body is required"),
 });
 
-export default function CreateEditArticle() {
+export default function CreateEditArticle(props) {
+  const { articleSlug } = useParams();
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState("");
 
   const authContext = useContext(AuthContext);
   const navigate = useNavigate();
   useEffect(() => {
-    if (authContext.isLogedin === false) {
-      navigate("/");
-    }
-  }, [authContext.isLogedin, navigate]);
-
+    const checkAuth = async () => {
+      const userToken = authContext.token || localStorage.getItem("token");
+      if (userToken) {
+        setIsAuthChecked(true);
+      } else {
+        setIsAuthChecked(true);
+        navigate("/");
+      }
+    };
+    checkAuth();
+  }, [authContext.token, navigate]);
   const {
     register,
     handleSubmit,
@@ -37,15 +46,59 @@ export default function CreateEditArticle() {
     setValue,
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      title: "",
+      description: "",
+      body: "",
+      tagList: [],
+    },
   });
+  const getArticle = async () => {
+    const userToken = localStorage.getItem("token");
+    try {
+      const request = await fetch(
+        `http://localhost:3000/api/articles/${articleSlug}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: userToken
+              ? { Authorization: `Bearer ${userToken}` }
+              : {},
+          },
+        }
+      );
+
+      const data = await request.json();
+      // setArticleDetail(data);
+      return data;
+    } catch (error) {
+      console.log("error on line 18:", error);
+      return error;
+    }
+  };
+  useEffect(() => {
+    if (articleSlug) {
+      getArticle().then((data) => {
+        if (data?.article) {
+          console.log(data);
+
+          setValue("title", data.article.title || "");
+          setValue("description", data.article.description || "");
+          setValue("body", data.article.body || "");
+          setValue("tagList", data.article.tagList || []);
+          setTags(data.article.tagList || []);
+        }
+      });
+    }
+  }, [articleSlug, setValue]);
 
   const handleAddTag = (e) => {
     if (e.key === "Enter" && newTag.trim() !== "") {
-      e.preventDefault(); // جلوگیری از سابمیت فرم با Enter
+      e.preventDefault();
       if (!tags.includes(newTag.trim())) {
         const updatedTags = [...tags, newTag.trim()];
         setTags(updatedTags);
-        setValue("tags", updatedTags); // به‌روزرسانی تگ‌ها در فرم
+        setValue("tagList", updatedTags); // به‌روزرسانی تگ‌ها در فرم
         setNewTag(""); // پاک کردن ورودی
       }
     }
@@ -53,28 +106,32 @@ export default function CreateEditArticle() {
   const handleRemoveTag = (tagToRemove) => {
     const updatedTags = tags.filter((tag) => tag !== tagToRemove);
     setTags(updatedTags);
-    setValue("tags", updatedTags); // به‌روزرسانی تگ‌ها در فرم
+    setValue("tagList", updatedTags);
   };
-
   const onSubmit = async (data) => {
     try {
-      const newArticle = {
+      const articlePayload = {
         article: {
           body: data.body,
-          description: data.discription,
+          description: data.description,
           title: data.title,
-          tagList: data.tags,
+          tagList: data.tagList || [],
         },
       };
 
-      const response = await fetch("http://localhost:3000/api/articles", {
-        method: "POST",
+      const url = articleSlug
+        ? `http://localhost:3000/api/articles/${articleSlug}`
+        : "http://localhost:3000/api/articles";
+      const method = articleSlug ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
         headers: {
           Authorization: `Bearer ${authContext.token}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify(newArticle),
+        body: JSON.stringify(articlePayload),
       });
 
       if (!response.ok) {
@@ -83,7 +140,7 @@ export default function CreateEditArticle() {
       }
 
       const responseData = await response.json();
-      console.log(" موفقیت‌آمیز:", responseData);
+      navigate(`/article/${responseData.article.slug}`);
       return responseData;
     } catch (error) {
       console.error("خطا در ورود:", error.message);
@@ -98,73 +155,73 @@ export default function CreateEditArticle() {
         username={authContext.userInfos?.username || ""}
         image={authContext.userInfos?.image || ""}
       />
-      <div class="editor-page">
-        <div class="container page">
-          <div class="row">
-            <div class="col-md-10 offset-md-1 col-xs-12">
+      <div className="editor-page">
+        <div className="container page">
+          <div className="row">
+            <div className="col-md-10 offset-md-1 col-xs-12">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <fieldset>
-                  <fieldset class="form-group">
+                  <fieldset className="form-group">
                     <input
                       {...register("title")}
                       type="text"
-                      class="form-control form-control-lg"
+                      className="form-control form-control-lg"
                       placeholder="Article Title"
                     />
-                    <ul class="error-messages">
+                    <ul className="error-messages">
                       {errors.title && <li>{errors.title.message}</li>}
                     </ul>
                   </fieldset>
-                  <fieldset class="form-group">
+                  <fieldset className="form-group">
                     <input
-                      {...register("discription")}
+                      {...register("description")}
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       placeholder="What's this article about?"
                     />
-                    <ul class="error-messages">
-                      {errors.discription && (
-                        <li>{errors.discription.message}</li>
+                    <ul className="error-messages">
+                      {errors.description && (
+                        <li>{errors.description.message}</li>
                       )}
                     </ul>
                   </fieldset>
-                  <fieldset class="form-group">
+                  <fieldset className="form-group">
                     <textarea
                       {...register("body")}
-                      class="form-control"
+                      className="form-control"
                       rows="8"
                       placeholder="Write your article (in markdown)"
                     ></textarea>
-                    <ul class="error-messages">
+                    <ul className="error-messages">
                       {errors.body && <li>{errors.body.message}</li>}
                     </ul>
                   </fieldset>
-                  <fieldset class="form-group">
+                  <fieldset className="form-group">
                     <input
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
                       onKeyDown={handleAddTag}
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       placeholder="Write tag and press Enter to add"
                     />
-                    <div class="tag-list">
-                      {tags.map((tag) => (
-                        <span key={tag} class="tag-default tag-pill">
+                    <div className="tag-list">
+                      {(tags || []).map((tag) => (
+                        <span key={tag} className="tag-default tag-pill">
                           {tag}
                           <i
                             onClick={() => handleRemoveTag(tag)}
-                            class="ion-close-round"
+                            className="ion-close-round"
                           ></i>
                         </span>
                       ))}
                     </div>
                   </fieldset>
                   <button
-                    class="btn btn-lg pull-xs-right btn-primary"
+                    className="btn btn-lg pull-xs-right btn-primary"
                     type="submit"
                   >
-                    Publish Article
+                    {articleSlug ? "Update Article" : "Publish Article"}
                   </button>
                 </fieldset>
               </form>

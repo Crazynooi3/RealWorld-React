@@ -19,32 +19,32 @@ export default function AuthenticatedUser(props) {
             </Link>
           </li>
           <li className="nav-item">
-            <a
+            <Link
               className={`nav-link ${
                 props.page === "NewArticle" ? "active" : ""
               } `}
-              href="/editor"
+              to="/editor"
             >
               {" "}
               <i className="ion-compose"></i>&nbsp;New Article{" "}
-            </a>
+            </Link>
           </li>
           <li className="nav-item">
-            <a
+            <Link
               className={`nav-link ${
                 props.page === "Settings" ? "active" : ""
               } `}
-              href="/settings"
+              to="/settings"
             >
               {" "}
               <i className="ion-gear-a"></i>&nbsp;Settings{" "}
-            </a>
+            </Link>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href={`/profile/${props.username}`}>
-              <img src={props.image} className="user-pic" />
-              {props.username}
-            </a>
+            <Link className="nav-link" to={`/profile/${props.username}`}>
+              <img src={props?.image} className="user-pic" />
+              {props?.username}
+            </Link>
           </li>
         </ul>
       </div>

@@ -16,6 +16,7 @@ const routes = [
   { path: "/article/:articleSlug", element: <Article /> },
   { path: "/editor/:articleSlug", element: <CreateEditArticle /> },
   { path: "/editor", element: <CreateEditArticle /> },
+  { path: "/editor/:articleSlug", element: <CreateEditArticle /> },
   { path: "/profile/:username", element: <Profile /> },
   // For Favorited Articles
   { path: "/profile/:username/favorites", element: <Profile /> },
