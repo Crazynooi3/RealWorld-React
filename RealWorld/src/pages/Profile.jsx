@@ -7,9 +7,6 @@ export default function Profile() {
   const param = useParams();
   const [userProfile, setUserProfile] = useState();
   const [currentUser, setCurrentUser] = useState();
-  console.log(userProfile);
-  console.log(currentUser);
-
   useEffect(() => {
     const userToken = localStorage.getItem("token");
     fetch(`http://localhost:3000/api/profiles/${param.username}`, {

@@ -80,8 +80,6 @@ export default function CreateEditArticle(props) {
     if (articleSlug) {
       getArticle().then((data) => {
         if (data?.article) {
-          console.log(data);
-
           setValue("title", data.article.title || "");
           setValue("description", data.article.description || "");
           setValue("body", data.article.body || "");

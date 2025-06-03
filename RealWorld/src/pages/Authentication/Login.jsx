@@ -49,22 +49,11 @@ export default function Login() {
         const errorData = await response.json();
         throw new Error(errorData.message || "خطا در ورود به سیستم");
       }
-
-      // دریافت داده‌های پاسخ
       const result = await response.json();
-      console.log("ورود موفقیت‌آمیز:", result);
-
-      // اینجا می‌توانید اقدامات بعد از ورود موفق را انجام دهید
-      // مثلاً ذخیره توکن در localStorage یا هدایت به صفحه دیگر
-      // localStorage.setItem("token", result.token);
-      // window.location.href = "/dashboard";
-
-      return result; // برای استفاده در UI یا مدیریت بعدی
+      return result;
     } catch (error) {
       console.error("خطا در ورود:", error.message);
-      // نمایش خطا به کاربر (می‌توانید از state استفاده کنید)
-      // setError("serverError", { message: error.message });
-      throw error; // برای مدیریت در فرم
+      throw error;
     }
   };
   return (

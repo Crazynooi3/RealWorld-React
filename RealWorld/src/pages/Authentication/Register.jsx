@@ -53,20 +53,13 @@ export default function Register() {
         const errorData = await response.json();
         throw new Error(errorData.message || "خطا در ورود به سیستم");
       }
-
-      // دریافت داده‌های پاسخ
       const responseData = await response.json();
-      console.log("ورود موفقیت‌آمیز:", responseData);
-      console.log(responseData.user.token);
       localStorage.setItem("token", responseData.user.token);
       navigate("/");
-
-      return responseData; // برای استفاده در UI یا مدیریت بعدی
+      return responseData;
     } catch (error) {
       console.error("خطا در ورود:", error.message);
-      // نمایش خطا به کاربر (می‌توانید از state استفاده کنید)
-      // setError("serverError", { message: error.message });
-      throw error; // برای مدیریت در فرم
+      throw error;
     }
   };
   return (

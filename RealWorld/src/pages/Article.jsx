@@ -78,8 +78,6 @@ export default function Article() {
 
       const data = await request.json();
       setArticleDetail(data);
-      console.log(data);
-
       return data;
     } catch (error) {
       console.log("error on line 18:", error);
