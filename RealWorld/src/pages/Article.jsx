@@ -327,9 +327,12 @@ export default function Article() {
                       />
                     </Link>
                     &nbsp;
-                    <a href="/profile/jacob-schmidt" className="comment-author">
+                    <Link
+                      to={`/profile/${commnet.author.username}`}
+                      className="comment-author"
+                    >
                       {commnet.author.username}
-                    </a>
+                    </Link>
                     <span className="date-posted">
                       {formatDate(commnet.createdAt)}
                     </span>
