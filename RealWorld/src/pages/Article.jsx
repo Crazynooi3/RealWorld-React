@@ -11,6 +11,11 @@ export default function Article() {
   const { articleSlug } = useParams();
   const [articleDetail, setArticleDetail] = useState({});
   const [isAuthor, setIsAuthor] = useState(false);
+  const [comments, setComments] = useState({
+    comments: [],
+  });
+  const [commentValue, setCommentValue] = useState("");
+
   const getArticle = async () => {
     const userToken = localStorage.getItem("token");
     try {
@@ -44,12 +49,6 @@ export default function Article() {
       setIsAuthor(false);
     }
   };
-  useEffect(() => {
-    getArticle();
-  }, [articleSlug, authContext.token]);
-  useEffect(() => {
-    isAuthorFunc();
-  }, [articleDetail, authContext.userInfos?.username]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -84,6 +83,83 @@ export default function Article() {
       return error;
     }
   };
+
+  const getComments = async () => {
+    try {
+      const request = await fetch(
+        `http://localhost:3000/api/articles/${articleSlug}/comments`
+      );
+
+      const data = await request.json();
+      setComments(data);
+      return data;
+    } catch (error) {
+      console.log("error on line 18:", error);
+      return error;
+    }
+  };
+
+  const createComment = async (e, comment) => {
+    e.preventDefault();
+    const userToken = localStorage.getItem("token");
+    let newComment = {
+      comment: {
+        body: comment,
+      },
+    };
+    try {
+      const request = await fetch(
+        `http://localhost:3000/api/articles/${articleSlug}/comments`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
+          },
+          body: JSON.stringify(newComment),
+        }
+      );
+
+      const data = await request.json();
+      getComments();
+      setCommentValue("");
+      return data;
+    } catch (error) {
+      console.log("error on :", error);
+      return error;
+    }
+  };
+
+  const removeComment = async (e, commentID) => {
+    e.preventDefault();
+    const userToken = localStorage.getItem("token");
+    try {
+      const request = await fetch(
+        `http://localhost:3000/api/articles/${articleSlug}/comments/${commentID}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
+
+      const data = await request.json();
+      getComments();
+      return data;
+    } catch (error) {
+      console.log("error on :", error);
+      return error;
+    }
+  };
+
+  useEffect(() => {
+    getArticle();
+    getComments();
+  }, [articleSlug, authContext.token]);
+  useEffect(() => {
+    isAuthorFunc();
+  }, [articleDetail, authContext.userInfos?.username]);
 
   return (
     <>
@@ -212,6 +288,10 @@ export default function Article() {
               <form className="card comment-form">
                 <div className="card-block">
                   <textarea
+                    value={commentValue}
+                    onChange={(e) => {
+                      setCommentValue(e.target.value);
+                    }}
                     className="form-control"
                     placeholder="Write a comment..."
                     rows="3"
@@ -219,61 +299,53 @@ export default function Article() {
                 </div>
                 <div className="card-footer">
                   <img
-                    src="http://i.imgur.com/Qr71crq.jpg"
+                    src={authContext?.userInfos?.image}
                     className="comment-author-img"
                   />
-                  <button className="btn btn-sm btn-primary">
+                  <button
+                    onClick={(e) => createComment(e, commentValue)}
+                    className="btn btn-sm btn-primary"
+                  >
                     Post Comment
                   </button>
                 </div>
               </form>
 
-              <div className="card">
-                <div className="card-block">
-                  <p className="card-text">
-                    With supporting text below as a natural lead-in to
-                    additional content.
-                  </p>
+              {comments.comments.map((commnet) => (
+                <div key={commnet.id} className="card">
+                  <div className="card-block">
+                    <p className="card-text">{commnet.body}</p>
+                  </div>
+                  <div className="card-footer">
+                    <Link
+                      to={`/profile/${commnet.author.username}`}
+                      className="comment-author"
+                    >
+                      <img
+                        src={commnet.author.image}
+                        className="comment-author-img"
+                      />
+                    </Link>
+                    &nbsp;
+                    <a href="/profile/jacob-schmidt" className="comment-author">
+                      {commnet.author.username}
+                    </a>
+                    <span className="date-posted">
+                      {formatDate(commnet.createdAt)}
+                    </span>
+                    {isAuthor ? (
+                      <span
+                        onClick={(e) => removeComment(e, commnet.id)}
+                        className="mod-options"
+                      >
+                        <i className="ion-trash-a"></i>
+                      </span>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 </div>
-                <div className="card-footer">
-                  <a href="/profile/author" className="comment-author">
-                    <img
-                      src="http://i.imgur.com/Qr71crq.jpg"
-                      className="comment-author-img"
-                    />
-                  </a>
-                  &nbsp;
-                  <a href="/profile/jacob-schmidt" className="comment-author">
-                    Jacob Schmidt
-                  </a>
-                  <span className="date-posted">Dec 29th</span>
-                </div>
-              </div>
-
-              <div className="card">
-                <div className="card-block">
-                  <p className="card-text">
-                    With supporting text below as a natural lead-in to
-                    additional content.
-                  </p>
-                </div>
-                <div className="card-footer">
-                  <a href="/profile/author" className="comment-author">
-                    <img
-                      src="http://i.imgur.com/Qr71crq.jpg"
-                      className="comment-author-img"
-                    />
-                  </a>
-                  &nbsp;
-                  <a href="/profile/jacob-schmidt" className="comment-author">
-                    Jacob Schmidt
-                  </a>
-                  <span className="date-posted">Dec 29th</span>
-                  <span className="mod-options">
-                    <i className="ion-trash-a"></i>
-                  </span>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
