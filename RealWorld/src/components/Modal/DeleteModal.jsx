@@ -1,9 +1,9 @@
 import ReactDOM from "react-dom";
+import { useNavigate } from "react-router-dom";
 
-export default function DeleteModal({ isOpen, onClose }) {
-  console.log(isOpen, onClose);
-
+export default function DeleteModal({ isOpen, onClose, deleteArticle }) {
   if (!isOpen) return null;
+  const navigate = useNavigate();
 
   return ReactDOM.createPortal(
     <div
@@ -24,8 +24,14 @@ export default function DeleteModal({ isOpen, onClose }) {
             <p>Are you sure about DELETE this article ?</p>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-danger">
-              Save changes
+            <button
+              onClick={() => {
+                deleteArticle(), onClose(), navigate("/");
+              }}
+              type="button"
+              className="btn btn-danger"
+            >
+              DELETE article !!!
             </button>
             <button
               type="button"

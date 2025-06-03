@@ -6,7 +6,7 @@ import AuthContext from "../Context/Context";
 import DeleteModal from "../components/Modal/DeleteModal";
 
 export default function Article() {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const authContext = useContext(AuthContext);
   const { articleSlug } = useParams();
   const [articleDetail, setArticleDetail] = useState({});
@@ -78,6 +78,7 @@ export default function Article() {
 
       const data = await request.json();
       setArticleDetail(data);
+      console.log(data);
 
       return data;
     } catch (error) {
@@ -279,7 +280,11 @@ export default function Article() {
           </div>
         </div>
       </div>
-      <DeleteModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <DeleteModal
+        isOpen={isModalOpen}
+        deleteArticle={deleteArticle}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 }
