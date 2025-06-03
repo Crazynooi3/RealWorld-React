@@ -1,22 +1,16 @@
-import React, {
-  use,
-  useState,
-  useContext,
-  useCallback,
-  useEffect,
-} from "react";
+import { useState, useContext, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import AuthenticatedUser from "../components/Header/AuthenticatedUser";
 import AuthContext from "../Context/Context";
+import DeleteModal from "../components/Modal/DeleteModal";
 
 export default function Article() {
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const authContext = useContext(AuthContext);
-
   const { articleSlug } = useParams();
   const [articleDetail, setArticleDetail] = useState({});
   const [isAuthor, setIsAuthor] = useState(false);
-
   const getArticle = async () => {
     const userToken = localStorage.getItem("token");
     try {
@@ -45,10 +39,8 @@ export default function Article() {
     let currentUser = authContext?.userInfos?.username;
 
     if (articleAuthor && currentUser && articleAuthor === currentUser) {
-      // console.log("true", articleAuthor, currentUser);
       setIsAuthor(true);
     } else {
-      // console.log("false", articleAuthor, currentUser);
       setIsAuthor(false);
     }
   };
@@ -67,6 +59,31 @@ export default function Article() {
       year: "numeric",
     };
     return date.toLocaleDateString("en-US", options); // خروجی: 28 May 2025
+  };
+
+  const deleteArticle = async () => {
+    const userToken = localStorage.getItem("token");
+    try {
+      if (isAuthor) {
+      }
+      const request = await fetch(
+        `http://localhost:3000/api/articles/${articleSlug}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
+
+      const data = await request.json();
+      setArticleDetail(data);
+
+      return data;
+    } catch (error) {
+      console.log("error on line 18:", error);
+      return error;
+    }
   };
 
   return (
@@ -116,7 +133,11 @@ export default function Article() {
                       <i className="ion-edit"></i> Edit Article
                     </button>
                   </Link>
-                  <button className="btn btn-sm btn-outline-danger">
+
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="btn btn-sm btn-outline-danger"
+                  >
                     <i className="ion-trash-a"></i> Delete Article
                   </button>
                 </>
@@ -176,7 +197,10 @@ export default function Article() {
                     </button>
                   </Link>
 
-                  <button className="btn btn-sm btn-outline-danger">
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="btn btn-sm btn-outline-danger"
+                  >
                     <i className="ion-trash-a"></i> Delete Article
                   </button>
                 </>
@@ -255,6 +279,7 @@ export default function Article() {
           </div>
         </div>
       </div>
+      <DeleteModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 }
