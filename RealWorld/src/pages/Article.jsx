@@ -308,9 +308,15 @@ export default function Article() {
                 &nbsp; {`Follow ${articleDetail?.article?.author?.username}`}
               </button>
               &nbsp;
-              <button className="btn btn-sm btn-outline-primary">
+              <button
+                onClick={() => favBtnHandler()}
+                className={`btn btn-sm btn-outline-primary ${
+                  favorited ? "active" : ""
+                }`}
+              >
                 <i className="ion-heart"></i>
-                &nbsp; Favorite Article <span className="counter">(29)</span>
+                &nbsp; Favorite Post{" "}
+                <span className="counter">({favoritesCount})</span>
               </button>
               {isAuthor && (
                 <>
