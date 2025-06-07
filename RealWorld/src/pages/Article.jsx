@@ -17,6 +17,7 @@ export default function Article() {
   const [commentValue, setCommentValue] = useState("");
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [favorited, setFavorited] = useState(false);
+  const [isFalowing, setIsFalowing] = useState(false);
 
   const getArticle = async () => {
     const userToken = localStorage.getItem("token");
@@ -35,6 +36,7 @@ export default function Article() {
       setArticleDetail(data);
       setFavorited(data.article.favorited);
       setFavoritesCount(data.article.favoritesCount);
+      setIsFalowing(data.article.author.following);
       // console.log(data);
 
       return data;
@@ -195,6 +197,50 @@ export default function Article() {
     }
   };
 
+  const follow = () => {
+    const userToken = localStorage.getItem("token");
+    fetch(
+      `http://localhost:3000/api/profiles/${articleDetail.article.author.username}/follow`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setIsFalowing(data.profile.following);
+        getArticle();
+      });
+  };
+
+  const unFollow = () => {
+    const userToken = localStorage.getItem("token");
+    fetch(
+      `http://localhost:3000/api/profiles/${articleDetail.article.author.username}/follow`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setIsFalowing(data.profile.following);
+        getArticle();
+      });
+  };
+
+  const followBtnHandler = () => {
+    if (isFalowing) {
+      unFollow();
+    } else {
+      follow();
+    }
+  };
+
   useEffect(() => {
     getArticle();
     getComments();
@@ -233,10 +279,16 @@ export default function Article() {
                   {formatDate(articleDetail?.article?.createdAt)}
                 </span>
               </div>
-              <button className="btn btn-sm btn-outline-secondary">
-                <i className="ion-plus-round"></i>
+              <button
+                onClick={() => followBtnHandler()}
+                className={`btn btn-sm btn-outline-secondary ${
+                  isFalowing ? "active" : ""
+                }`}
+              >
+                <i
+                  className={isFalowing ? "ion-minus-round" : "ion-plus-round "}
+                ></i>
                 &nbsp; {`Follow ${articleDetail?.article?.author?.username}`}{" "}
-                <span className="counter">(10)</span>
               </button>
               &nbsp;&nbsp;
               <button
@@ -303,9 +355,16 @@ export default function Article() {
                   {formatDate(articleDetail?.article?.createdAt)}
                 </span>
               </div>
-              <button className="btn btn-sm btn-outline-secondary ">
-                <i className="ion-plus-round"></i>
-                &nbsp; {`Follow ${articleDetail?.article?.author?.username}`}
+              <button
+                onClick={() => followBtnHandler()}
+                className={`btn btn-sm btn-outline-secondary ${
+                  isFalowing ? "active" : ""
+                }`}
+              >
+                <i
+                  className={isFalowing ? "ion-minus-round" : "ion-plus-round "}
+                ></i>
+                &nbsp; {`Follow ${articleDetail?.article?.author?.username}`}{" "}
               </button>
               &nbsp;
               <button
