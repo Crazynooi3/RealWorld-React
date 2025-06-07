@@ -14,7 +14,6 @@ export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const articlesPerPage = 10;
-
   const authContext = useContext(AuthContext);
   const [articleList, setArticleList] = useState({
     articles: [],
@@ -25,8 +24,6 @@ export default function Home() {
     articles: [],
     articlesCount: 0,
   });
-
-  // const [currentPage, setCurrentPage] = useState(1);
 
   const getArticle = async (offset, limit) => {
     const userToken = localStorage.getItem("token");
@@ -135,7 +132,6 @@ export default function Home() {
                     <Link
                       onClick={() => {
                         setUserFeed("yourFeed");
-                        // getYourFeedArticle();
                       }}
                       className={`nav-link ${
                         userFeed === "yourFeed" ? "active" : ""
@@ -180,6 +176,7 @@ export default function Home() {
                 : userFeed === "yourFeed"
                 ? feedArticleList.articles.map((article) => (
                     <ArticlePreviewFeed
+                      key={article.slug}
                       author={article.author.username}
                       image={article.author.image}
                       title={article.title}
