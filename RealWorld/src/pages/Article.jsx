@@ -15,6 +15,8 @@ export default function Article() {
     comments: [],
   });
   const [commentValue, setCommentValue] = useState("");
+  const [favoritesCount, setFavoritesCount] = useState(0);
+  const [favorited, setFavorited] = useState(false);
 
   const getArticle = async () => {
     const userToken = localStorage.getItem("token");
@@ -31,6 +33,9 @@ export default function Article() {
 
       const data = await request.json();
       setArticleDetail(data);
+      setFavorited(data.article.favorited);
+      setFavoritesCount(data.article.favoritesCount);
+      // console.log(data);
 
       return data;
     } catch (error) {
@@ -99,6 +104,43 @@ export default function Article() {
     }
   };
 
+  const favorite = () => {
+    const userToken = localStorage.getItem("token");
+    fetch(`http://localhost:3000/api/articles/${articleSlug}/favorite`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setFavorited(data.article.favorited);
+        getArticle();
+      });
+  };
+
+  const UnFavorite = () => {
+    const userToken = localStorage.getItem("token");
+    fetch(`http://localhost:3000/api/articles/${articleSlug}/favorite`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setFavorited(data.article.favorited);
+        getArticle();
+      });
+  };
+
+  const favBtnHandler = () => {
+    if (favorited) {
+      UnFavorite();
+    } else {
+      favorite();
+    }
+  };
   const createComment = async (e, comment) => {
     e.preventDefault();
     const userToken = localStorage.getItem("token");
@@ -197,9 +239,15 @@ export default function Article() {
                 <span className="counter">(10)</span>
               </button>
               &nbsp;&nbsp;
-              <button className="btn btn-sm btn-outline-primary">
+              <button
+                onClick={() => favBtnHandler()}
+                className={`btn btn-sm btn-outline-primary ${
+                  favorited ? "active" : ""
+                }`}
+              >
                 <i className="ion-heart"></i>
-                &nbsp; Favorite Post <span className="counter">(29)</span>
+                &nbsp; Favorite Post{" "}
+                <span className="counter">({favoritesCount})</span>
               </button>
               {isAuthor && (
                 <>
